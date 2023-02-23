@@ -2,5 +2,6 @@
     "sample_file" : "/nfs/team292/kt22/pediatric_gonads/data/raw/scRNAseq/nf_scrublet.csv",
     "output_dir" : "/nfs/team292/kt22/nf_tests",
     "min_genes" : 10,
-    "min_cells" : 100
+    "min_cells" : 100,
+    "rnd_seed" : 42
 }
