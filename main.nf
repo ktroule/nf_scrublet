@@ -15,6 +15,6 @@ process calculate_scrublet_score {
 workflow {
     Channel.fromPath(params.sample_file) \
     | splitCsv(header : true) \
-    | map { row -> tuple(row.sample)} \
+    | map { row -> tuple(row.sample, row.directory)} \
     | calculate_scrublet_score 
 }
