@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # -- REQUIRED LIBRARIES
+import matplotlib.pyplot as plt
 import scrublet as scr
 import seaborn as sns
 import scanpy as sc
@@ -13,7 +14,7 @@ import os
 import re
 
 # -- CUSTOM MODULES
-import bin.modules.pval_correction as kcorr
+import modules.pval_correction as kcorr
 
 # -- DEFINE SCRIPT INPUT ARGUMENTS
 parser = argparse.ArgumentParser()
@@ -41,17 +42,17 @@ adata.obs_names = [ args.sample + '_' + i for i in adata.obs_names ]
 
 # -- Basic initial filtering
 sc.pp.filter_cells(adata,
-                    min_genes = args.min_genes)
+                    min_genes = int(args.min_genes))
 
 sc.pp.filter_genes(adata,
-                   min_cells = args.min_cells)
+                   min_cells = int(args.min_cells))
 
 sc.pp.calculate_qc_metrics(adata,
                             inplace = True,
                             percent_top = None)
 
 # -- Calculate doublet score with scrublet
-np.random.seed(args.rnd_seed)
+np.random.seed(int(args.rnd_seed))
 
 scrub = scr.Scrublet(adata.X)
 doublet_scores, predicted_doublets = scrub.scrub_doublets(verbose = False)
@@ -59,9 +60,8 @@ adata.obs['scrublet_score'] = doublet_scores
 adata.obs['scrublet_prediction'] = predicted_doublets
 
 # -- Plot scrublet distribution
-fig = sns.displot(adata.obs['scrublet_score']).set(title = args.sample)
-fig = fig.get_figure()
-fig.savefig(os.path.join(args.out_dir, args.sample + '.png'))
+sns.displot(adata.obs['scrublet_score']).set(title = args.sample)
+plt.savefig(os.path.join(args.out_dir, args.sample + '.png'))
 
 
 # -- Chunk of coded provided by Luz
@@ -119,4 +119,4 @@ idx = [ bool(re.match('scrublet', i)) for i in adata.obs.columns ]
 scrublet_sample = adata.obs.loc[:, idx]
 
 # -- Write results
-scrublet_sample.to_csv(os.path.join(args.out_dir + args.sample + 'csv'))
+scrublet_sample.to_csv(os.path.join(args.out_dir, args.sample + 'csv'))
