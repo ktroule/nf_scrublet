@@ -8,7 +8,9 @@ import scanpy as sc
 import numpy as np
 import sys, getopt
 import argparse
+import scipy
 import os
+import re
 
 # -- CUSTOM MODULES
 import bin.modules.pval_correction as kcorr
@@ -57,7 +59,9 @@ adata.obs['scrublet_score'] = doublet_scores
 adata.obs['scrublet_prediction'] = predicted_doublets
 
 # -- Plot scrublet distribution
-sns.displot(adata.obs['scrublet_score']).set(title = args.sample)
+fig = sns.displot(adata.obs['scrublet_score']).set(title = args.sample)
+fig = fig.get_figure()
+fig.savefig(os.path.join(args.out_dir, args.sample + '.png'))
 
 
 # -- Chunk of coded provided by Luz
@@ -106,7 +110,7 @@ mad = np.median(adata.obs['scrublet_cluster_score'][mask]-med)
 #let's do a one-sided test. the Bertie write-up does not address this but it makes sense
 zscores = (adata.obs['scrublet_cluster_score'].values - med) / (1.4826 * mad)
 adata.obs['scrublet_zscore'] = zscores
-pvals = 1-scipy.stats.norm.cdf(zscores)
+pvals = 1 - scipy.stats.norm.cdf(zscores)
 adata.obs['scrublet_bh_pval'] = kcorr.bh(pvals)
 adata.obs['scrublet_bonf_pval'] = kcorr.bonf(pvals)
 
