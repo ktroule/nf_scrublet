@@ -1,3 +1,4 @@
+#!/usr/bin/env nextflow
 nextflow.enable.dsl=2
 
 process calculate_scrublet_score {
@@ -20,7 +21,7 @@ process calculate_scrublet_score {
 
 workflow {
     Channel.fromPath(params.sample_file) \
-    | splitCsv(header : true) \
-    | map { row -> tuple(row.sample, row.directory)} \
-    | calculate_scrublet_score 
+        | splitCsv(header : true) \
+        | map { row -> tuple(row.sample, row.directory) } \
+        | calculate_scrublet_score 
 }
