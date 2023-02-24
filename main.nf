@@ -12,10 +12,10 @@ process calculate_scrublet_score {
     00_calculate_scrublet_score.py \
         --sample $sample \
         --directory $directory \
-        --min_genes params.min_genes \
-        --min_cells params.min_cells \
-        --rnd_seed params.rnd_seed \
-        --out_dir params.output_dir
+        --min_genes $params.min_genes \
+        --min_cells $params.min_cells \
+        --rnd_seed $params.rnd_seed \
+        --out_dir $params.output_dir
     """
 }
 
