@@ -28,7 +28,6 @@ parser.add_argument('-out', '--out_dir')
 args = parser.parse_args()
 print(args)
 
-
 # -- SCRUBLET SCORE CALCULATION
 adata = sc.read_10x_mtx(os.path.join(args.directory,
                                      args.sample,
