@@ -119,4 +119,4 @@ idx = [ bool(re.match('scrublet', i)) for i in adata.obs.columns ]
 scrublet_sample = adata.obs.loc[:, idx]
 
 # -- Write results
-scrublet_sample.to_csv(os.path.join(args.out_dir, args.sample + 'csv'))
+scrublet_sample.to_csv(os.path.join(args.out_dir, args.sample + '_scrublet' + '.csv'))
