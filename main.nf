@@ -2,11 +2,11 @@
 nextflow.enable.dsl=2
 
 process calculate_scrublet_score {
-    // conda '/nfs/team292/kt22/pediatric_gonads/env/p-PG-scanpy1.9.1_20220517.txt'
-    conda '/home/jovyan/my-conda-envs/p-PG-scanpy1.9.1'
+    conda '/nfs/team292/kt22/pediatric_gonads/env/p-PG-scanpy1.9.1_20220517.txt'
     input:
-    tuple val(sample), val(directory)
-
+        tuple val(sample), val(directory)
+    output:
+        file "${sample}.h5ad"
     script:
     """
     00_calculate_scrublet_score.py \
@@ -20,8 +20,8 @@ process calculate_scrublet_score {
 }
 
 workflow {
-    Channel.fromPath(params.sample_file) \
+    out_test = Channel.fromPath(params.sample_file) \
         | splitCsv(header : true) \
         | map { row -> tuple(row.sample, row.directory) } \
-        | calculate_scrublet_score 
+        | calculate_scrublet_score
 }

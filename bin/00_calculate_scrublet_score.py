@@ -88,19 +88,19 @@ sc.tl.leiden(adata)
 adata.obs['leiden'] = [ str(i) for i in adata.obs['leiden'] ]
 
 for clus in np.unique(adata.obs['leiden']):
-    
+
     adata_sub = adata[adata.obs['leiden'] == clus].copy()
     sc.tl.leiden(adata_sub)
-    
+
     adata_sub.obs['leiden'] = [ clus+','+i for i in adata_sub.obs['leiden'] ]
     adata.obs.loc[adata_sub.obs_names,'leiden'] = adata_sub.obs['leiden']
 
 #compute the cluster scores - the median of Scrublet scores per overclustered cluster
 for clus in np.unique(adata.obs['leiden']):
-    
+
     results = np.median(adata.obs.loc[adata.obs['leiden'] == clus, 'scrublet_score'])
     adata.obs.loc[adata.obs['leiden']==clus, 'scrublet_cluster_score'] = results
-        
+
 #now compute doublet p-values. figure out the median and mad (from above-median values) for the distribution
 med = np.median(adata.obs['scrublet_cluster_score'])
 mask = adata.obs['scrublet_cluster_score'] > med
@@ -119,3 +119,6 @@ scrublet_sample = adata.obs.loc[:, idx]
 
 # -- Write results
 scrublet_sample.to_csv(os.path.join(args.out_dir, args.sample + '_scrublet' + '.csv'))
+
+adata.obs = adata.obs[['n_genes', 'n_genes_by_counts', 'total_counts', 'n_counts']]
+adata.write_h5ad(str(args.sample) + '.h5ad')
