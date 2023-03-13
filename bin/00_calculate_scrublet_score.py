@@ -26,10 +26,9 @@ parser.add_argument('-r', '--rnd_seed')
 parser.add_argument('-out', '--out_dir')
 
 args = parser.parse_args()
-print(args)
-
 
 # -- SCRUBLET SCORE CALCULATION
+print('ktl1')
 adata = sc.read_10x_mtx(os.path.join(args.directory,
                                      args.sample,
                                      'filtered_feature_bc_matrix'),
@@ -39,7 +38,7 @@ adata.var_names_make_unique()
 
 # -- Rename Sample barcode by adding sample id
 adata.obs_names = [ args.sample + '_' + i for i in adata.obs_names ]
-
+print('ktl2')
 # -- Basic initial filtering
 sc.pp.filter_cells(adata,
                     min_genes = int(args.min_genes))
@@ -53,7 +52,7 @@ sc.pp.calculate_qc_metrics(adata,
 
 # -- Calculate doublet score with scrublet
 np.random.seed(int(args.rnd_seed))
-
+print('ktl3')
 scrub = scr.Scrublet(adata.X)
 doublet_scores, predicted_doublets = scrub.scrub_doublets(verbose = False)
 adata.obs['scrublet_score'] = doublet_scores
@@ -63,7 +62,7 @@ adata.obs['scrublet_prediction'] = predicted_doublets
 sns.displot(adata.obs['scrublet_score']).set(title = args.sample)
 plt.savefig(os.path.join(args.out_dir, args.sample + '.png'))
 
-
+print('ktl4')
 # -- Chunk of coded provided by Luz
 # -- overcluster prep. run turbo basic scanpy pipeline
 sc.pp.normalize_per_cell(adata,
@@ -75,7 +74,7 @@ sc.pp.highly_variable_genes(adata,
                             min_disp = 0.5)
 # -- Subset to HVGs
 adata = adata[:, adata.var['highly_variable']]
-
+print('5')
 sc.pp.scale(adata,
             max_value = 10)
 
@@ -120,3 +119,6 @@ scrublet_sample = adata.obs.loc[:, idx]
 
 # -- Write results
 scrublet_sample.to_csv(os.path.join(args.out_dir, args.sample + '_scrublet' + '.csv'))
+
+adata.obs = adata.obs[['n_genes', 'n_genes_by_counts', 'total_counts', 'n_counts']]
+adata.write_h5ad(str(args.sample) + '.h5ad')
