@@ -3,3 +3,4 @@ work/*
 *html
 trace.txt
 bin/cache
+bin/__pycache__
